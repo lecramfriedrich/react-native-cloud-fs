@@ -1,4 +1,16 @@
 
+# Appdelegate
+```
+  #import "iCloud.h"
+  ...
+  [[iCloud sharedCloud] setupiCloudDocumentSyncWithUbiquityContainer:nil];
+  BOOL cloudIsAvailable = [[iCloud sharedCloud] checkCloudAvailability];
+  if (cloudIsAvailable) {
+      [[iCloud sharedCloud] init];
+      [[iCloud sharedCloud] updateFiles];
+  }
+```
+
 # react-native-cloud-fs
 
 A react-native library for reading and writing files to _iCloud Drive_ (iOS) and _Google Drive_ (Android).

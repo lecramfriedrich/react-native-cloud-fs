@@ -10,6 +10,7 @@
 #import "RCTUtils.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "RCTLog.h"
+#import "iCloud.h"
 
 @implementation RNCloudFs
 
@@ -19,7 +20,6 @@
 }
 
 RCT_EXPORT_MODULE()
-
 //see https://developer.apple.com/library/content/documentation/General/Conceptual/iCloudDesignGuide/Chapters/iCloudFundametals.html
 
 RCT_EXPORT_METHOD(createFile:(NSDictionary *) options
@@ -70,7 +70,11 @@ RCT_EXPORT_METHOD(fileExists:(NSDictionary *)options
 RCT_EXPORT_METHOD(listFiles:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
-
+    BOOL cloudIsAvailable = [[iCloud sharedCloud] checkCloudAvailability];
+    if (cloudIsAvailable) {
+        [[iCloud sharedCloud] updateFiles];
+    }
+    
     NSString *destinationPath = [options objectForKey:@"targetPath"];
     NSString *scope = [options objectForKey:@"scope"];
     bool documentsFolder = !scope || [scope caseInsensitiveCompare:@"visible"] == NSOrderedSame;
@@ -160,6 +164,11 @@ RCT_EXPORT_METHOD(listFiles:(NSDictionary *)options
 RCT_EXPORT_METHOD(copyToCloud:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
+
+    BOOL cloudIsAvailable = [[iCloud sharedCloud] checkCloudAvailability];
+    if (cloudIsAvailable) {
+        [[iCloud sharedCloud] updateFiles];
+    }
 
     // mimeType is ignored for iOS
     NSDictionary *source = [options objectForKey:@"sourcePath"];
